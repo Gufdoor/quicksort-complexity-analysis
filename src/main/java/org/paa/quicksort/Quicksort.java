@@ -13,46 +13,31 @@ public class Quicksort {
     private static final int M = 15;
     private static volatile boolean isLoading = true;
 
-    public static void quickSort(int[] array, int low, int high) {
-        while (low < high) {
-            int pivotIndex = handleQuicksortSepartion(array, low, high);
-
-            // Recursively sort the smaller partition and iteratively sort the larger partition
-            if (pivotIndex - low < high - pivotIndex) {
-                quickSort(array, low, pivotIndex - 1);
-                low = pivotIndex + 1; // tail recursion on the larger part
-            } else {
-                quickSort(array, pivotIndex + 1, high);
-                high = pivotIndex - 1; // tail recursion on the larger part
-            }
+    public static void quickSort(int[] elements, int left, int right) {
+        // If one or no element, finish
+        if (left >= right - 1) {
+            return;
         }
-        // if (low < high) {
-        //     int pivotIndex = partition(array, low, high);
-        //     quickSort(array, low, pivotIndex - 1);
-        //     quickSort(array, pivotIndex + 1, high);
-        // }
-    }
 
-    private static int handleQuicksortSepartion(int[] array, int low, int high) {
-        int pivot = array[high];
-        int i = low - 1;
+        // Pivot is always the last element of the array
+        int pivot = elements[right - 1];
+        int finalPivotIndex = left;
 
-        for (int j = low; j < high; j++) {
-            if (array[j] <= pivot) {
-                i++;
-                // Swap
-                int temp = array[i];
-                array[i] = array[j];
-                array[j] = temp;
+        for (int i = left; i < right - 1; i++) {
+            if (elements[i] < pivot) {
+                int tempElement = elements[finalPivotIndex];
+                elements[finalPivotIndex] = elements[i];
+                elements[i] = tempElement;
+                finalPivotIndex++;
             }
         }
 
-        // Swap pivot
-        int temp = array[i + 1];
-        array[i + 1] = array[high];
-        array[high] = temp;
+        // Swap pivot with finalPivotIndex element
+        elements[right - 1] = elements[finalPivotIndex];
+        elements[finalPivotIndex] = pivot;
 
-        return i + 1;
+        quickSort(elements, left, finalPivotIndex);
+        quickSort(elements, finalPivotIndex + 1, right);
     }
 
     public static int[] generateRandomArray(int n) {
@@ -79,7 +64,7 @@ public class Quicksort {
         return array;
     }
 
-    public static long measureExecutionTime(int[] array) {
+    public static long handleQuicksort(int[] array) {
         long startTime = System.currentTimeMillis();
         quickSort(array, 0, array.length - 1);
         long endTime = System.currentTimeMillis();
@@ -125,7 +110,7 @@ public class Quicksort {
 
             for (int j = 0; j < arrayCount; j++) {
                 final int[] randomArray = generateRandomArray(n);
-                avgTime += measureExecutionTime(randomArray);
+                avgTime += handleQuicksort(randomArray);
             }
 
             // Calculate the average time for sorting 100 arrays
@@ -136,7 +121,7 @@ public class Quicksort {
 
             for (int j = 0; j < arrayCount; j++) {
                 int[] worstArray = generateWorstCaseArray(n);
-                worstTime += measureExecutionTime(worstArray);
+                worstTime += handleQuicksort(worstArray);
             }
 
             // Calculate the average time for sorting 100 arrays

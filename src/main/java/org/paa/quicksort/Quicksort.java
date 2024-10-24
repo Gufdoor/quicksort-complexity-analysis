@@ -1,6 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- */
 package org.paa.quicksort;
 
 import java.util.Random;
@@ -9,10 +6,6 @@ import org.knowm.xchart.SwingWrapper;
 import org.knowm.xchart.XYChart;
 import org.knowm.xchart.XYChartBuilder;
 
-/**
- *
- * @author biel5
- */
 public class Quicksort {
     // Enrollment number (M)
 
@@ -20,16 +13,16 @@ public class Quicksort {
     private static final int M = 10;
 
     // QuickSort algorithm
-    public static void quickSort(int[] array, int low, int high) {
+    public static void executeQuickSort(int[] array, int low, int high) {
         while (low < high) {
-            int pivotIndex = partition(array, low, high);
+            int pivotIndex = handleQuicksortSepartion(array, low, high);
 
             // Recursively sort the smaller partition and iteratively sort the larger partition
             if (pivotIndex - low < high - pivotIndex) {
-                quickSort(array, low, pivotIndex - 1);
+                executeQuickSort(array, low, pivotIndex - 1);
                 low = pivotIndex + 1; // tail recursion on the larger part
             } else {
-                quickSort(array, pivotIndex + 1, high);
+                executeQuickSort(array, pivotIndex + 1, high);
                 high = pivotIndex - 1; // tail recursion on the larger part
             }
         }
@@ -40,7 +33,7 @@ public class Quicksort {
         // }
     }
 
-    private static int partition(int[] array, int low, int high) {
+    private static int handleQuicksortSepartion(int[] array, int low, int high) {
         int pivot = array[high];
         int i = low - 1;
         for (int j = low; j < high; j++) {
@@ -86,7 +79,7 @@ public class Quicksort {
     // Measure the execution time of QuickSort
     public static long measureExecutionTime(int[] array) {
         long startTime = System.currentTimeMillis();
-        quickSort(array, 0, array.length - 1);
+        executeQuickSort(array, 0, array.length - 1);
         long endTime = System.currentTimeMillis();
 
         return (endTime - startTime); 

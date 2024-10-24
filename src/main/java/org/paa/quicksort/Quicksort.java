@@ -87,6 +87,7 @@ public class Quicksort {
         return (endTime - startTime);
     }
 
+    // Poor temporary solution - to be improved
     private static void showLoadingIndicator() {
         System.out.print("\nLoading");
 
@@ -102,7 +103,7 @@ public class Quicksort {
             }
         }
 
-        System.out.println("\nLoading complete");
+        System.out.println("\nLoading complete!");
     }
 
     public static void main(String[] args) {

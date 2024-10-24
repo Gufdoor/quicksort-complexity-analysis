@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <prerequisites>
+        <maven>3.9.0</maven>
+    </prerequisites>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.paa</groupId>
+    <artifactId>quicksort</artifactId>
+    <name>Quicksort Simulation</name>
+    <description>A simple app to simulate Quicksort algorithm executions.</description>
+    <version>1.0-SNAPSHOT</version>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.release>19</maven.compiler.release>
+        <exec.mainClass>org.paa.quicksort.Quicksort</exec.mainClass>
+    </properties>
+    <dependencies>
+        <dependency>
+            <groupId>org.knowm.xchart</groupId>
+            <artifactId>xchart</artifactId>
+            <version>3.8.0</version>
+        </dependency>
+    </dependencies>
+</project>

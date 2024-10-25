@@ -1,17 +1,20 @@
 package org.paa.quicksort;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import org.apache.commons.math3.stat.regression.SimpleRegression;
 import org.knowm.xchart.SwingWrapper;
 import org.knowm.xchart.XYChart;
 import org.knowm.xchart.XYChartBuilder;
+import org.knowm.xchart.XYSeries;
+import org.knowm.xchart.style.lines.SeriesLines;
+import org.knowm.xchart.style.markers.SeriesMarkers;
 
 public class Quicksort {
     // Enrollment number (M)
-
-    // private static final int M = 719316;
-    private static final int M = 10;
+    private static final int M = 719316;
     private static volatile boolean isLoading = true;
 
     public static void quickSort(int[] array, int left, int right) {
@@ -121,21 +124,21 @@ public class Quicksort {
 
     private static double[] calculateRegressionValues(double slope, double intercept, double[] simulationArraySizes, boolean isAverageCase) {
         final double[] regressionValues = new double[simulationArraySizes.length];
-        
+
         for (int i = 1; i < simulationArraySizes.length; i++) {
             final double n = simulationArraySizes[i];
 
             if (isAverageCase) {
                 // n log n for average case
-                final double logN = n * Math.log(n); 
+                final double logN = n * Math.log(n);
                 regressionValues[i] = slope * logN + intercept;
             } else {
                 // n^2 for worst case
-                final double nSquared = n * n; 
+                final double nSquared = n * n;
                 regressionValues[i] = slope * nSquared + intercept;
             }
         }
-        
+
         return regressionValues;
     }
 
@@ -202,7 +205,7 @@ public class Quicksort {
         final double[] avgRegressionCoeffs = handleRegression(simulationArraySizes, averageCaseTimesMeans, true);
         final double avgSlope = avgRegressionCoeffs[0];
         final double avgIntercept = avgRegressionCoeffs[1];
-        final double[] avgRegressionValues = calculateRegressionValues(avgSlope, avgIntercept, simulationArraySizes, true);
+        final double[] averageRegressionValues = calculateRegressionValues(avgSlope, avgIntercept, simulationArraySizes, true);
 
         // Perform regression for the worst case
         final double[] worstRegressionCoeffs = handleRegression(simulationArraySizes, worstCaseTimesMeans, false);
@@ -210,20 +213,25 @@ public class Quicksort {
         final double worstIntercept = worstRegressionCoeffs[1];
         final double[] worstRegressionValues = calculateRegressionValues(worstSlope, worstIntercept, simulationArraySizes, false);
 
-        for (int i = 1; i < arrayCount; i++) {
-            final double n = simulationArraySizes[i];
-            final double nSquared = n * n;
-            worstRegressionValues[i] = worstSlope * nSquared + worstIntercept;
-        }
+        final List<XYChart> charts = new ArrayList<>();
 
-        // Plot the chart with average and worst cases series
-        XYChart chart = new XYChartBuilder().width(800).height(600).title("QuickSort Analysis").xAxisTitle("n").yAxisTitle("Avarage time (ms)").build();
-        chart.addSeries("Average Case", simulationArraySizes, averageCaseTimesMeans);
-        chart.addSeries("Worst Case", simulationArraySizes, worstCaseTimesMeans);
-        chart.addSeries("Average Case Regression", simulationArraySizes, avgRegressionValues);
-        chart.addSeries("Worst Case Regression", simulationArraySizes, worstRegressionValues);
+        // Plot the chart with average case series
+        XYChart averageCasechart = new XYChartBuilder().width(600).height(400).title("Average Case Analysis").xAxisTitle("n").yAxisTitle("Avarage time (ms)").build();
+        averageCasechart.addSeries("T(n)", simulationArraySizes, averageCaseTimesMeans);
+        final XYSeries averageRegressionSeries = averageCasechart.addSeries("Regression", simulationArraySizes, averageRegressionValues);
+        averageRegressionSeries.setLineStyle(SeriesLines.DASH_DASH).setLineWidth(1);
+        averageRegressionSeries.setMarker(SeriesMarkers.CROSS);
+        charts.add(averageCasechart);
 
-        new SwingWrapper<>(chart).displayChart();
+        // Plot the chart with worst cases series
+        XYChart worseCasechart = new XYChartBuilder().width(600).height(400).title("Worst Case Analysis").xAxisTitle("n").yAxisTitle("Avarage time (ms)").build();
+        worseCasechart.addSeries("T(n)", simulationArraySizes, worstCaseTimesMeans);
+        final XYSeries worstRegressionSeries = worseCasechart.addSeries("Regression", simulationArraySizes, worstRegressionValues);
+        worstRegressionSeries.setLineStyle(SeriesLines.DASH_DASH).setLineWidth(1);
+        worstRegressionSeries.setMarker(SeriesMarkers.CROSS);
+        charts.add(worseCasechart);
+
+        new SwingWrapper<>(charts).displayChartMatrix();
 
         isLoading = false;
 

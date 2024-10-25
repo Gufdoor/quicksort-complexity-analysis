@@ -1,6 +1,7 @@
 package org.paa.quicksort;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
@@ -13,9 +14,9 @@ import org.knowm.xchart.style.lines.SeriesLines;
 import org.knowm.xchart.style.markers.SeriesMarkers;
 
 public class Quicksort {
+
     // Enrollment number (M)
     private static final int M = 719316;
-    private static volatile boolean isLoading = true;
 
     private static void quickSort(int[] array, int left, int right) {
         while (left < right) {
@@ -153,25 +154,6 @@ public class Quicksort {
         return chart;
     }
 
-    // Poor temporary solution - to be improved
-    private static void showLoadingIndicator() {
-        System.out.print("\nLoading");
-
-        // Milliseconds
-        final int sleepInterval = 500;
-
-        while (isLoading) {
-            System.out.print(".");
-            try {
-                Thread.sleep(sleepInterval);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
-        }
-
-        System.out.println("\nLoading complete!");
-    }
-
     public static void main(String[] args) {
         final int simulations = 1000;
         final int arrayCount = 100;
@@ -179,8 +161,8 @@ public class Quicksort {
         double[] averageCaseTimesMeans = new double[arrayCount];
         double[] worstCaseTimesMeans = new double[arrayCount];
 
-        Thread loadingThread = new Thread(() -> showLoadingIndicator());
-        loadingThread.start();
+        Date date = new Date(System.currentTimeMillis());
+        System.out.println("\nIniting - " + date + "\n");
 
         for (int i = 1, j = 0; i <= simulations; i += 10, j++) {
             int n = M * i / 10;
@@ -189,6 +171,7 @@ public class Quicksort {
 
         // Run 100 simulations
         for (int i = 1; i < arrayCount; i++) {
+            System.out.println("> Simulation " + i + " of " + arrayCount);
             int n = (int) simulationArraySizes[i];
 
             // Average case (random arrays)
@@ -234,14 +217,9 @@ public class Quicksort {
         XYChart worseCasechart = handleCaseChart("Worst Case", simulationArraySizes, worstCaseTimesMeans, worstRegressionValues);
         charts.add(worseCasechart);
 
+        date = new Date(System.currentTimeMillis());
+        System.out.println("\nFinished! - " + date);
+
         new SwingWrapper<>(charts).displayChartMatrix();
-
-        isLoading = false;
-
-        try {
-            loadingThread.join();
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
     }
 }

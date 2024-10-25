@@ -142,6 +142,17 @@ public class Quicksort {
         return regressionValues;
     }
 
+    private static XYChart handleCaseChart(String title, double[] sizes, double[] times, double[] regressionValues) {
+        final XYChart chart = new XYChartBuilder().width(600).height(400).title(title).xAxisTitle("n").yAxisTitle("Average time (ms)").build();
+        chart.addSeries("T(n)", sizes, times);
+
+        final XYSeries regressionSeries = chart.addSeries("Regression", sizes, regressionValues);
+        regressionSeries.setLineStyle(SeriesLines.DASH_DASH).setLineWidth(1);
+        regressionSeries.setMarker(SeriesMarkers.CROSS);
+
+        return chart;
+    }
+
     // Poor temporary solution - to be improved
     private static void showLoadingIndicator() {
         System.out.print("\nLoading");
@@ -215,20 +226,12 @@ public class Quicksort {
 
         final List<XYChart> charts = new ArrayList<>();
 
-        // Plot the chart with average case series
-        XYChart averageCasechart = new XYChartBuilder().width(600).height(400).title("Average Case Analysis").xAxisTitle("n").yAxisTitle("Avarage time (ms)").build();
-        averageCasechart.addSeries("T(n)", simulationArraySizes, averageCaseTimesMeans);
-        final XYSeries averageRegressionSeries = averageCasechart.addSeries("Regression", simulationArraySizes, averageRegressionValues);
-        averageRegressionSeries.setLineStyle(SeriesLines.DASH_DASH).setLineWidth(1);
-        averageRegressionSeries.setMarker(SeriesMarkers.CROSS);
+        // Build the chart with average case series
+        XYChart averageCasechart = handleCaseChart("Average Case", simulationArraySizes, averageCaseTimesMeans, averageRegressionValues);
         charts.add(averageCasechart);
 
-        // Plot the chart with worst cases series
-        XYChart worseCasechart = new XYChartBuilder().width(600).height(400).title("Worst Case Analysis").xAxisTitle("n").yAxisTitle("Avarage time (ms)").build();
-        worseCasechart.addSeries("T(n)", simulationArraySizes, worstCaseTimesMeans);
-        final XYSeries worstRegressionSeries = worseCasechart.addSeries("Regression", simulationArraySizes, worstRegressionValues);
-        worstRegressionSeries.setLineStyle(SeriesLines.DASH_DASH).setLineWidth(1);
-        worstRegressionSeries.setMarker(SeriesMarkers.CROSS);
+        // Build the chart with worst cases series
+        XYChart worseCasechart = handleCaseChart("Worst Case", simulationArraySizes, worstCaseTimesMeans, worstRegressionValues);
         charts.add(worseCasechart);
 
         new SwingWrapper<>(charts).displayChartMatrix();

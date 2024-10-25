@@ -119,6 +119,26 @@ public class Quicksort {
         return new double[]{regression.getSlope(), regression.getIntercept()};
     }
 
+    private static double[] calculateRegressionValues(double slope, double intercept, double[] simulationArraySizes, boolean isAverageCase) {
+        final double[] regressionValues = new double[simulationArraySizes.length];
+        
+        for (int i = 1; i < simulationArraySizes.length; i++) {
+            final double n = simulationArraySizes[i];
+
+            if (isAverageCase) {
+                // n log n for average case
+                final double logN = n * Math.log(n); 
+                regressionValues[i] = slope * logN + intercept;
+            } else {
+                // n^2 for worst case
+                final double nSquared = n * n; 
+                regressionValues[i] = slope * nSquared + intercept;
+            }
+        }
+        
+        return regressionValues;
+    }
+
     // Poor temporary solution - to be improved
     private static void showLoadingIndicator() {
         System.out.print("\nLoading");
@@ -182,19 +202,13 @@ public class Quicksort {
         final double[] avgRegressionCoeffs = handleRegression(simulationArraySizes, averageCaseTimesMeans, true);
         final double avgSlope = avgRegressionCoeffs[0];
         final double avgIntercept = avgRegressionCoeffs[1];
-        final double[] avgRegressionValues = new double[arrayCount];
-
-        for (int i = 1; i < arrayCount; i++) {
-            final double n = simulationArraySizes[i];
-            final double logN = n * Math.log(n);
-            avgRegressionValues[i] = avgSlope * logN + avgIntercept;
-        }
+        final double[] avgRegressionValues = calculateRegressionValues(avgSlope, avgIntercept, simulationArraySizes, true);
 
         // Perform regression for the worst case
         final double[] worstRegressionCoeffs = handleRegression(simulationArraySizes, worstCaseTimesMeans, false);
         final double worstSlope = worstRegressionCoeffs[0];
         final double worstIntercept = worstRegressionCoeffs[1];
-        final double[] worstRegressionValues = new double[arrayCount];
+        final double[] worstRegressionValues = calculateRegressionValues(worstSlope, worstIntercept, simulationArraySizes, false);
 
         for (int i = 1; i < arrayCount; i++) {
             final double n = simulationArraySizes[i];

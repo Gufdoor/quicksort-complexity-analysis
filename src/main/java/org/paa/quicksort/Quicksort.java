@@ -17,7 +17,7 @@ public class Quicksort {
     private static final int M = 719316;
     private static volatile boolean isLoading = true;
 
-    public static void quickSort(int[] array, int left, int right) {
+    private static void quickSort(int[] array, int left, int right) {
         while (left < right) {
             int pivotIndex = handleQuicksortPartition(array, left, right);
 
@@ -60,7 +60,7 @@ public class Quicksort {
         return i + 1;
     }
 
-    public static int[] generateRandomArray(int n) {
+    private static int[] generateRandomArray(int n) {
         final int[] array = new int[n];
         final int seed = M;
 
@@ -74,7 +74,7 @@ public class Quicksort {
         return array;
     }
 
-    public static int[] generateWorstCaseArray(int n) {
+    private static int[] generateWorstCaseArray(int n) {
         final int[] array = new int[n];
         final int seed = M;
 
@@ -91,7 +91,7 @@ public class Quicksort {
         return array;
     }
 
-    public static double handleQuicksort(int[] array) {
+    private static double handleQuicksort(int[] array) {
         final double milliParseDenominator = 1000000.0;
         long startTime = System.nanoTime();
         quickSort(array, 0, array.length - 1);

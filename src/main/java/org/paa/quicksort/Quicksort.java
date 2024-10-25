@@ -70,17 +70,24 @@ public class Quicksort {
     }
 
     public static int[] generateWorstCaseArray(int n) {
-        int[] array = new int[n];
+        final int[] array = new int[n];
+        final int seed = M;
+
+        // Random number generator initialized with enrollment number as seed
+        final Random random = new Random(seed);
+
+        // Random number will always be equal to one of the following interval: 1-100
+        final int baseNumber = random.nextInt(100) + 1;
 
         for (int i = 0; i < n; i++) {
-            array[i] = i + 1;
+            array[i] = baseNumber + i;
         }
 
         return array;
     }
 
     public static double handleQuicksort(int[] array) {
-        final double milliParseDenominator = 1000000.0; 
+        final double milliParseDenominator = 1000000.0;
         long startTime = System.nanoTime();
         quickSort(array, 0, array.length - 1);
         long endTime = System.nanoTime();
@@ -123,32 +130,33 @@ public class Quicksort {
             simulationArraySizes[j] = n;
         }
 
-        // Average case (random arrays)
-        for (int i = 0; i < arrayCount; i++) {
-            final int n = (int)simulationArraySizes[i];
-            double avgTime = 0;
-            final int[] randomArray = generateRandomArray(n);
-            avgTime += handleQuicksort(randomArray);
+        // Run 100 simulations
+        for (int i = 1; i < arrayCount; i++) {
+            int n = (int) simulationArraySizes[i]; 
 
-            // Calculate the average time for sorting 100 arrays
-            averageCaseTimesMeans[i] = avgTime / arrayCount;
+            // Average case (random arrays)
+            double avgElapsedTime = 0;
+
+            for (int j = 0; j < arrayCount; j++) {
+                final int[] randomArray = generateRandomArray(n);
+                avgElapsedTime += handleQuicksort(randomArray);
+            }
+
+            averageCaseTimesMeans[i] = avgElapsedTime / (double) arrayCount;
+
+            // Worst case (sorted arrays)
+            double worstElapsedTime = 0;
+
+            for (int j = 0; j < arrayCount; j++) {
+                final int[] worstArray = generateWorstCaseArray(n);
+                worstElapsedTime += handleQuicksort(worstArray);
+            }
+
+            worstCaseTimesMeans[i] = worstElapsedTime / (double) arrayCount;
         }
-
-        
-        // Worst case (sorted arrays)
-        for (int i = 0; i < arrayCount; i++) {
-            final int n = (int)simulationArraySizes[i];
-            double worstTime = 0;
-            int[] worstArray = generateWorstCaseArray(n);
-            worstTime += handleQuicksort(worstArray);
-
-            // Calculate the average time for sorting 100 arrays
-            worstCaseTimesMeans[i] = worstTime / arrayCount;
-        }
-
 
         // Plot the chart with average and worst cases series
-        XYChart chart = new XYChartBuilder().width(800).height(600).title("QuickSort Analysis").xAxisTitle("n").yAxisTitle("Time (ms)").build();
+        XYChart chart = new XYChartBuilder().width(800).height(600).title("QuickSort Analysis").xAxisTitle("n").yAxisTitle("Avarage time (ms)").build();
         chart.addSeries("Average Case", simulationArraySizes, averageCaseTimesMeans);
         chart.addSeries("Worst Case", simulationArraySizes, worstCaseTimesMeans);
 
